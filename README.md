@@ -19,6 +19,5 @@ bash run.sh
 Or, Enter this.
 
 ```
-cd unist-spaceshare
 npm run dev
 ```

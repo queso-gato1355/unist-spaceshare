@@ -1,91 +1,157 @@
-// // src/app/register/page.js
-// import React, { useState } from 'react';
-// import { useRouter } from 'next/router';
-// import { auth, firestore } from '../firebase';
+"use client";
 
-// export default function RegisterPage() {
-//   const router = useRouter();
-//   const [formData, setFormData] = useState({
-//     email: '',
-//     password: '',
-//     confirmPassword: '',
-//     nickname: '',
-//   });
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
+export default function Register() {
+    const router = useRouter();
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     if (formData.password !== formData.confirmPassword) {
-//       alert('비밀번호가 일치하지 않습니다.');
-//       return;
-//     }
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [profilePicture, setProfilePicture] = useState(null);
 
-//     try {
-//       const { user } = await auth.createUserWithEmailAndPassword(
-//         formData.email,
-//         formData.password
-//       );
+    const [isEmailValid, setIsEmailValid] = useState(true);
+    const [isPasswordValid, setIsPasswordValid] = useState(true);
+    const [isSamePassword, setIsSamePassword] = useState(true);
 
-//       await firestore.collection('users').doc(user.uid).set({
-//         nickname: formData.nickname,
-//         email: formData.email,
-//       });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-//       alert('회원가입이 완료되었습니다.');
-//       router.push('/login');
-//     } catch (error) {
-//       alert(error.message);
-//     }
-//   };
+        if (!validateEmail(email)) {
+            setIsEmailValid(false);
+            return;
+        }
+        if (password.length < 8 || password.length > 20) {
+            setIsPasswordValid(false);
+            return;
+        }
+        if (password !== confirmPassword) {
+            setIsSamePassword(false);
+            return;
+        }
 
-//   return (
-//     <div className="container mx-auto p-4">
-//       <div className="text-center">
-//         <h1 className="text-4xl font-bold mb-4">Welcome!</h1>
-//         <form className="space-y-4" onSubmit={handleSubmit}>
-//           <div className="flex justify-center mb-4">
-//             <div className="w-32 h-32 bg-gray-300"></div>
-//           </div>
-//           <input
-//             type="email"
-//             name="email"
-//             placeholder="Email"
-//             className="border p-2 w-full rounded"
-//             value={formData.email}
-//             onChange={handleChange}
-//           />
-//           <input
-//             type="text"
-//             name="nickname"
-//             placeholder="Nickname"
-//             className="border p-2 w-full rounded"
-//             value={formData.nickname}
-//             onChange={handleChange}
-//           />
-//           <input
-//             type="password"
-//             name="password"
-//             placeholder="Password"
-//             className="border p-2 w-full rounded"
-//             value={formData.password}
-//             onChange={handleChange}
-//           />
-//           <input
-//             type="password"
-//             name="confirmPassword"
-//             placeholder="Confirm Password"
-//             className="border p-2 w-full rounded"
-//             value={formData.confirmPassword}
-//             onChange={handleChange}
-//           />
-//           <button className="bg-blue-600 text-white px-4 py-2 rounded w-full">
-//             Register!
-//           </button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
+        const res = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, username, password, profilePicture }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Registration successful");
+            router.push("/login");
+        } else {
+            alert(data.error);
+        }
+    };
+
+    function validateEmail(email) {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
+
+    return (
+        <div className="container mx-auto p-4 flex justify-center items-center">
+            <div className="text-center max-w-[700px]">
+                <h1 className="text-4xl font-bold mb-4">Welcome!</h1>
+                <form
+                    onSubmit={handleSubmit}
+                    className="space-y-4 flex flex-wrap"
+                >
+                    <div className="flex justify-center w-full mb-4">
+                        <div className="flex flex-col justify-center items-center mr-10">
+                            <div>
+                                <img
+                                    src={profilePicture ? URL.createObjectURL(profilePicture) : "https://placehold.co/200x200"}
+                                    alt="Profile"
+                                    className="w-20 h-20 mb-4 rounded-full"
+                                />
+                            </div>
+                            <input
+                                type="file"
+                                id="profilePicture"
+                                className="hidden"
+                                onChange={(e) =>
+                                    setProfilePicture(e.target.files[0])
+                                }
+                            />
+                            <label
+                                htmlFor="profilePicture"
+                                className="bg-blue-500 hover:bg-blue-400 text-white transition-all border p-2 w-full rounded cursor-pointer"
+                            >
+                                Select...
+                            </label>
+                        </div>
+                        <div className="flex flex-col justify-center items-center">
+                            {!isEmailValid && (
+                                <p className="text-red-500 mb-2">
+                                    Invalid email address.
+                                </p>
+                            )}
+                            <input
+                                type="email"
+                                placeholder="Email"
+                                className={`border transition-all p-2 mb-2 w-full rounded ${
+                                    isEmailValid ? "" : "border-red-500"
+                                }`}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Username"
+                                className="border transition-all p-2 mb-2 w-full rounded"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                            {!isPasswordValid ? (
+                                <p className="text-red-500 mb-2">
+                                    Password should be more than 8 words and
+                                    less than 20 words.
+                                </p>
+                            ) : (
+                                <p className="text-gray-500 text-xs mb-2">
+                                    Password should be more than 8 words and
+                                    less than 20 words.
+                                </p>
+                            )}
+                            <input
+                                type="password"
+                                placeholder="Password"
+                                className={`border transition-all p-2 mb-2 w-full rounded ${
+                                    isPasswordValid ? "" : "border-red-500"
+                                }`}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            {!isSamePassword && (
+                                <p className="text-red-500">
+                                    Password does not match.
+                                </p>
+                            )}
+                            <input
+                                type="password"
+                                placeholder="Confirm Password"
+                                className={`border transition-all p-2 w-full rounded ${
+                                    isSamePassword ? "" : "border-red-500"
+                                }`}
+                                value={confirmPassword}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
+                            />
+                        </div>
+                    </div>
+                    <div className="w-full">
+                        <button type="submit" className="bg-blue-600 hover:bg-blue-500 w-40 hover:w-44 transition-all text-white px-4 py-2 rounded">Register!</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}

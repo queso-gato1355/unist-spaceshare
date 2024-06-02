@@ -3,11 +3,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../hooks/useAuth";
 
 export default function PostPage() {
-    //const router = useRouter();
-    //const { user } = useAuth();
+    const router = useRouter();
     const [buttonState, setButtonState] = useState(false);
 
     const [isValidImage, setIsValidImage] = useState(true);
@@ -26,8 +24,14 @@ export default function PostPage() {
     });
 
     const handleChange = (e) => {
-        if (e.target.name === "price1" || e.target.name === "price2" || e.target.name === "price3" || e.target.name === "price4") {
-            const index = parseInt(e.target.name[e.target.name.length - 1], 10) - 1;
+        if (
+            e.target.name === "price1" ||
+            e.target.name === "price2" ||
+            e.target.name === "price3" ||
+            e.target.name === "price4"
+        ) {
+            const index =
+                parseInt(e.target.name[e.target.name.length - 1], 10) - 1;
             const newPrice = [...formData.price];
             newPrice[index] = e.target.value;
             setFormData({ ...formData, price: newPrice });
@@ -39,7 +43,7 @@ export default function PostPage() {
             setFormData({ ...formData, image: e.target.value });
             return;
         }
-        setFormData({ ...formData, [e.target.name]: e.target.value});
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const buildingOptions = [
@@ -52,40 +56,45 @@ export default function PostPage() {
         "Building 307",
         "Building 308",
         "Building 309",
-        "Other"
+        "Other",
     ];
 
-    const handleSubmit = (e)=> {
-        // 단순 콘솔 출력
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
-    }
-
-    //   const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //       // 게시글 작성 API 호출
-    //       const response = await fetch('/api/posts', {
-    //         method: 'POST',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({ ...formData, userId: user.id }),
-    //       });
-    //       const data = await response.json();
-    //       // 게시글 작성 후 처리 로직
-    //       router.push(`/${data.slug}`);
-    //     } catch (error) {
-    //       console.error(error);
-    //     }
-    //   };
+        try {
+            const token = document.cookie.replace(
+                /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
+                "$1"
+            ); // 쿠키에서 토큰 추출
+            const response = await fetch("/api/shares", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`, // 요청 헤더에 토큰 추가
+                },
+                body: JSON.stringify(formData),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                // 게시글 작성 후 처리 로직
+                router.push(`/list/${data.id}`);
+            } else {
+                console.error(data.error);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     useEffect(() => {
-        setFormData({ ...formData, occupation: buttonState ? "Seller" : "Buyer" });
+        setFormData({
+            ...formData,
+            occupation: buttonState ? "Seller" : "Buyer",
+        });
     }, [buttonState]);
 
     useEffect(() => {
-        setFormData({ ...formData, image: imgURL});
+        setFormData({ ...formData, image: imgURL });
     }, [imgURL]);
 
     useEffect(() => {
@@ -94,11 +103,17 @@ export default function PostPage() {
             setFormData({ ...formData, location: "" });
             return;
         }
-        setFormData({ ...formData, location: locationType === "Other" ? customLocation : locationType });
+        setFormData({
+            ...formData,
+            location: locationType === "Other" ? customLocation : locationType,
+        });
     }, [locationType, customLocation]);
 
     function buttonToggleHandler(buttonName) {
-        if (buttonName === "Share Space" && buttonState === false || buttonName === "Buy Space" && buttonState === true) {
+        if (
+            (buttonName === "Share Space" && buttonState === false) ||
+            (buttonName === "Buy Space" && buttonState === true)
+        ) {
             setButtonState(!buttonState);
         }
     }
@@ -110,18 +125,26 @@ export default function PostPage() {
     }
 
     return (
-        <div className="container mx-auto p-4">
-            <div className="text-center">
+        <div className="container mx-auto p-4 flex justify-center min-h-screen">
+            <div className="text-center max-w-[500px]">
                 <h1 className="text-4xl font-bold mb-4">I Want to...</h1>
                 <div className="flex justify-center space-x-4 mb-4">
-                    <button 
-                        className={`${buttonState ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'} px-4 py-2 rounded transition-all`}
+                    <button
+                        className={`${
+                            buttonState
+                                ? "bg-blue-600 hover:bg-blue-500 text-white"
+                                : "bg-gray-300 hover:bg-gray-400 text-gray-700"
+                        } px-4 py-2 rounded transition-all`}
                         onClick={() => buttonToggleHandler("Share Space")}
                     >
                         Share Space
                     </button>
-                    <button 
-                        className={`${buttonState ? 'bg-gray-300 hover:bg-gray-400 text-gray-700' : 'bg-blue-600 hover:bg-blue-500 text-white'}  px-4 py-2 rounded transition-all`}
+                    <button
+                        className={`${
+                            buttonState
+                                ? "bg-gray-300 hover:bg-gray-400 text-gray-700"
+                                : "bg-blue-600 hover:bg-blue-500 text-white"
+                        }  px-4 py-2 rounded transition-all`}
                         onClick={() => buttonToggleHandler("Buy Space")}
                     >
                         Buy Space
@@ -138,12 +161,18 @@ export default function PostPage() {
                     />
                     <select
                         name="locationType"
-                        className={`border p-2 w-full rounded ${isValidLocation ? undefined : 'border-red-500 border-2'}`}
+                        className={`border p-2 w-full rounded ${
+                            isValidLocation
+                                ? undefined
+                                : "border-red-500 border-2"
+                        }`}
                         value={locationType}
                         onChange={(e) => setLocationType(e.target.value)}
                     >
-                        {buildingOptions.map(option => (
-                            <option key={option} value={option}>{option}</option>
+                        {buildingOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
                         ))}
                     </select>
                     {locationType === "Other" && (
@@ -166,18 +195,35 @@ export default function PostPage() {
                     <div className="flex space-x-4">
                         <div>
                             {imgURL && isValidImage ? (
-                                <img src={imgURL} alt="preview" className="h-48 w-full object-cover rounded" onError={imageErrorHandler}/>
+                                <div className="bg-gray-300 w-48 h-48 flex items-center justify-center rounded">
+                                    <img
+                                        src={imgURL}
+                                        alt="preview"
+                                        className="w-48 h-48 object-cover rounded"
+                                        onError={imageErrorHandler}
+                                    />
+                                </div>
                             ) : (
-                                <div className="bg-gray-300 h-48 flex items-center justify-center rounded">
-                                    <span className="text-gray-500">No Image</span>
+                                <div className="bg-gray-300 w-48 h-48 flex items-center justify-center rounded">
+                                    <span className="text-gray-500">
+                                        No Image
+                                    </span>
                                 </div>
                             )}
-                            {!isValidImage && <p className="text-red-500 mt-2">Invalid Image URL</p>}
+                            {!isValidImage && (
+                                <p className="text-red-500 mt-2">
+                                    Invalid Image URL
+                                </p>
+                            )}
                             <input
                                 type="text"
                                 name="image"
                                 placeholder="Enter Image URL"
-                                className={`border mt-2 p-2 w-full rounded mb-2 ${isValidImage ? undefined : 'border-red-500 border-2'}`}
+                                className={`border mt-2 p-2 w-full rounded mb-2 ${
+                                    isValidImage
+                                        ? undefined
+                                        : "border-red-500 border-2"
+                                }`}
                                 value={imgURL}
                                 onChange={handleChange}
                             ></input>
@@ -221,7 +267,7 @@ export default function PostPage() {
                         type="submit"
                         className="bg-blue-600 text-white px-4 py-2 rounded w-full"
                     >
-                        Submit!
+                        Post it!
                     </button>
                 </form>
             </div>

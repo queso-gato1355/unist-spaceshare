@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-color: #f0f0f0; /* 원하는 배경색으로 변경하세요 */
+    margin: 0; /* 기본 마진을 제거하여 배경색이 전체 화면을 덮도록 합니다 */
+    padding: 0; /* 기본 패딩을 제거하여 배경색이 전체 화면을 덮도록 합니다 */
+    box-sizing: border-box; /* 모든 요소의 크기를 box-sizing으로 설정 */
+  }

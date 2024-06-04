@@ -62,17 +62,39 @@ export default function PostPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = document.cookie.replace(
-                /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-                "$1"
-            ); // 쿠키에서 토큰 추출
+            const formdata = new FormData();
+            formdata.append("title", formData.title);
+            formdata.append("image", formData.image);
+            formdata.append("location", formData.location);
+            formdata.append("description", formData.description);
+            formdata.append("price", formData.price);
+            formdata.append("occupation", formData.occupation);
+
+            console.log("cookie: ", document.cookie);
+
+            const token = document.cookie.token;
+
+            if (!token) {
+                console.error("No token found in cookies");
+                return;
+            }
+
+            console.log(token);
+
+            console.log("Send this request: ", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formdata,
+            });
+
             const response = await fetch("/api/shares", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`, // 요청 헤더에 토큰 추가
                 },
-                body: JSON.stringify(formData),
+                body: formdata,
             });
             const data = await response.json();
             if (response.ok) {

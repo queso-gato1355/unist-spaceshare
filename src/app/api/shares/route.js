@@ -40,16 +40,27 @@ export async function POST(request) {
             });
         }
 
-        const data = await request.json();
+        const formData = await request.formData();
+        const title = formData.get("title");
+        const location = formData.get("location");
+        const description = formData.get("description");
+        const price = formData.getAll("price");
+        const image = formData.get("image");
+        const occupation = formData.get("occupation");
 
         const { db } = await connectToDatabase();
-        const postsCollection = db.collection("Posts");
+        const postsCollection = db.collection("posts");
 
         const postedTime = Math.floor(Date.now() / 1000); // 현재 Unix 시간 (초 단위)
         const state = true; // 항상 true로 설정
 
         const result = await postsCollection.insertOne({
-            ...data,
+            title,
+            location,
+            description,
+            price,
+            image,
+            occupation,
             userId,
             postedTime,
             state,
@@ -59,6 +70,26 @@ export async function POST(request) {
 
         return new Response(JSON.stringify({ message: "Post inserted!", id: insertedId }), {
             status: 201,
+            headers: { "Content-Type": "application/json" },
+        });
+    } catch (error) {
+        console.error(error);
+        return new Response(JSON.stringify({ message: "An error occurred" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+        });
+    }
+}
+
+export async function GET(request) {
+    try {
+        const { db } = await connectToDatabase();
+        const postsCollection = db.collection("posts");
+
+        const posts = await postsCollection.find({}).toArray();
+
+        return new Response(JSON.stringify(posts), {
+            status: 200,
             headers: { "Content-Type": "application/json" },
         });
     } catch (error) {

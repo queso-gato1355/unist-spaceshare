@@ -1,7 +1,8 @@
 "use client";
 
 import ButtonLink from "@/components/ButtonLink";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import UserContext from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
@@ -9,6 +10,7 @@ export default function Login() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const { user, isLoading, setUser } = useContext(UserContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,8 +27,17 @@ export default function Login() {
 
         if (data.success) {
             alert("Login successful");
-            // Store token in local storage or cookies
-            localStorage.setItem("token", data.token);
+            // Store token in cookie
+            document.cookie = `token=${data.token}; path=/`;
+
+            // Fetch user data
+            const userRes = await fetch("/api/user", {
+                credentials: "include",
+            });
+
+            const userData = await userRes.json();
+            setUser(userData);
+            
             router.push("/list");
         } else {
             alert(data.error);

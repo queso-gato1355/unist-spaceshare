@@ -4,15 +4,20 @@
 import "./NavBar.css";
 
 import React from "react";
+import path from "path";
+import { useContext } from "react";
+import UserContext from "@/context/UserContext";
 import { useRouter } from "next/navigation";
-// import { useAuth } from "../hooks/useAuth";
+
+const publicPath = path.resolve("public");
 
 export default function NavBar() {
     const router = useRouter();
-    // const { user, isLoading } = useAuth();
-    const user = false;
+    const { user, isLoading } = useContext(UserContext);
 
-    //if (isLoading) return <div>Loading...</div>;
+    console.log(user);
+
+    if (isLoading) return <div>Loading...</div>;
 
     return (
         <nav className="bg-[#03AED2] p-4 flex justify-between items-center">
@@ -24,12 +29,13 @@ export default function NavBar() {
             </span>
             {user ? (
                 <div className="flex items-center">
+                    <button>Log out</button>
                     <img
-                        src={user.profilePic}
+                        src={user.profilePicture}
                         alt="Profile"
                         className="w-8 h-8 rounded-full mr-2"
                     />
-                    <span className="text-white">{user.name}</span>
+                    <span className="text-white">{user.username}</span>
                 </div>
             ) : (
                 <button

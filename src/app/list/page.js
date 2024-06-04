@@ -2,11 +2,13 @@
 "use client";
 
 import React from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Post from "@/components/posts/Post";
 
 export default function ListPage() {
     const router = useRouter();
+    const [posts, setPosts] = useState([]);
 
     const handleMakeForm = () => {
         router.push("/post");
@@ -49,6 +51,13 @@ export default function ListPage() {
         }
     ];
 
+    // get the posts to the const and fetch them if there's any new.
+    useEffect(() => {
+        fetch("/api/shares")
+            .then((res) => res.json())
+            .then((data) => setPosts(data.posts));
+    }, []);
+
     return (
         <div className="container mx-auto p-4">
             <div className="text-center">
@@ -60,11 +69,11 @@ export default function ListPage() {
                     Make a form
                 </button>
                 <div className="flex justify-between items-center mb-4">
-                    <span>{`total ${DUMMY_DATA.length} posts`}</span>
+                    <span>{`total ${posts ? posts.length : 0} posts`}</span>
                     <span>Filter</span>
                 </div>
                 <div className="space-y-4">
-                    {DUMMY_DATA.map((post) => (
+                    {posts && posts.map((post) => (
                         <Post key={post.id} post={post} />
                     ))}
                 </div>

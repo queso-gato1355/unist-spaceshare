@@ -49,9 +49,10 @@ export async function POST(request) {
         const occupation = formData.get("occupation");
 
         const { db } = await connectToDatabase();
-        const postsCollection = db.collection("posts");
+        const postsCollection = db.collection("Posts");
 
-        const postedTime = Math.floor(Date.now() / 1000); // 현재 Unix 시간 (초 단위)
+        // store current time in Unix timestamp (in string)
+        const postedTime = String(Math.floor(Date.now() / 1000));
         const state = true; // 항상 true로 설정
 
         const result = await postsCollection.insertOne({
@@ -84,11 +85,16 @@ export async function POST(request) {
 export async function GET(request) {
     try {
         const { db } = await connectToDatabase();
-        const postsCollection = db.collection("posts");
+        const postsCollection = db.collection("Posts");
 
         const posts = await postsCollection.find({}).toArray();
 
-        return new Response(JSON.stringify(posts), {
+        // 전체 포스트에 존재하는 postedId를 정규표현식을 통해 깔끔한 postedTime으로 변환
+        posts.forEach((post) => {
+            post.postedTime = Number(post.postedTime.replace(/[^\d]/g, ''));
+        });
+
+        return new Response(JSON.stringify({posts}), {
             status: 200,
             headers: { "Content-Type": "application/json" },
         });

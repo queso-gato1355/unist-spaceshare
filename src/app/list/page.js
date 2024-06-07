@@ -9,23 +9,30 @@ import Post from "@/components/posts/Post";
 export default function ListPage() {
     const router = useRouter();
     const [posts, setPosts] = useState([]);
+    const [intervalId, setIntervalId] = useState(null);
 
     const handleMakeForm = () => {
         router.push("/post");
     };
 
     // get the posts once a second
+    const fetchPosts = async () => {
+        const res = await fetch("/api/shares", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await res.json();
+        setPosts(data.posts);
+    };
+
     useEffect(() => {
-        const fetchPosts = async () => {
-            const res = await fetch("/api/posts");
-            const data = await res.json();
-            setPosts(data.posts);
-        };
-
         fetchPosts();
-        const interval = setInterval(fetchPosts, 1000);
+        const id = setInterval(fetchPosts, 1000);
+        setIntervalId(id);
 
-        return () => clearInterval(interval);
+        return () => clearInterval(intervalId);
     }, []);
 
     return (
@@ -43,9 +50,8 @@ export default function ListPage() {
                     <span>Filter</span>
                 </div>
                 <div className="space-y-4">
-                    {posts && posts.map((post) => (
-                        <Post key={post.id} post={post} />
-                    ))}
+                    {posts &&
+                        posts.map((post) => <Post key={post.id} post={post} />)}
                 </div>
             </div>
         </div>

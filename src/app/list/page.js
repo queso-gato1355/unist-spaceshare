@@ -2,15 +2,31 @@
 "use client";
 
 import React from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Post from "@/components/posts/Post";
 
-export default function ListPage(props) {
+export default function ListPage() {
     const router = useRouter();
+    const [posts, setPosts] = useState([]);
 
     const handleMakeForm = () => {
         router.push("/post");
     };
+
+    // get the posts once a second
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const res = await fetch("/api/posts");
+            const data = await res.json();
+            setPosts(data.posts);
+        };
+
+        fetchPosts();
+        const interval = setInterval(fetchPosts, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div className="container mx-auto p-4">
@@ -23,28 +39,15 @@ export default function ListPage(props) {
                     Make a form
                 </button>
                 <div className="flex justify-between items-center mb-4">
-                    <span>{`total ${props.posts ? props.posts.length : 0} posts`}</span>
+                    <span>{`total ${posts ? posts.length : 0} posts`}</span>
                     <span>Filter</span>
                 </div>
                 <div className="space-y-4">
-                    {props.posts && props.posts.map((post) => (
+                    {posts && posts.map((post) => (
                         <Post key={post.id} post={post} />
                     ))}
                 </div>
             </div>
         </div>
     );
-}
-
-// get posts data from db as props.posts
-export async function getStaticProps() {
-    const res = await fetch("http://localhost:3000/api/shares");
-    const data = await res.json();
-
-    return {
-        props: {
-            posts: data.posts,
-        },
-        revalidate: 1,
-    };
 }

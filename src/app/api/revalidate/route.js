@@ -1,5 +1,5 @@
-import { connectToDatabase } from "../../../../lib/mongodb";
-import { generateAccessToken } from "../../../../utils/jwtToken";
+import { connectToDatabase } from "../../../lib/mongodb";
+import { generateAccessToken } from "../../../utils/jwtToken";
 
 export const POST = async (req) => {
     const { refreshToken } = await req.json();

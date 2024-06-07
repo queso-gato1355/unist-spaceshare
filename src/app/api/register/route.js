@@ -64,9 +64,3 @@ export const POST = async (req) => {
         return new Response(JSON.stringify({ error: "Server Error" }), { status: 500 });
     }
 }
-
-export const config = {
-    api: {
-        bodyParser: false, // Disable Next.js's default body parsing so multer can handle it
-    },
-};

@@ -9,15 +9,26 @@ import { useContext } from "react";
 import UserContext from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 
-const publicPath = path.resolve("public");
-
 export default function NavBar() {
     const router = useRouter();
     const { user, isLoading } = useContext(UserContext);
 
-    console.log(user);
+    console.log("user: ", user);
 
-    if (isLoading) return <div>Loading...</div>;
+    // if (isLoading)
+    //     return (
+    //         <nav className="bg-[#03AED2] p-4 flex justify-between items-center">
+    //             <span
+    //                 className="logo text-white text-2xl font-bold cursor-pointer transition-all"
+    //                 onClick={() => router.push("/")}
+    //             >
+    //                 SpaceShare
+    //             </span>
+    //             <div className="flex items-center justify-center">
+    //                 <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-900"></div>
+    //             </div>
+    //         </nav>
+    //     );
 
     return (
         <nav className="bg-[#03AED2] p-4 flex justify-between items-center">

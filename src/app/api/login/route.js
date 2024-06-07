@@ -63,12 +63,10 @@ export async function POST(req) {
         .collection("users")
         .updateOne({ username }, { $set: { refreshToken } });
 
-    return new Response(JSON.stringify({ success: true, token }), {
+    return new Response(JSON.stringify({ success: true, id: user._id, accessToken: accessToken }), {
         status: 200,
         headers: {
             "Content-Type": "application/json",
-            "Set-Cookie": `refreshToken=${refreshToken}; Path=/; HttpOnly; SameSite=Strict; Max-Age=3600`,
         },
-        body: JSON.stringify({ success: true, id: user._id, token: accessToken }),
     });
 }

@@ -69,7 +69,7 @@ export const POST = async (req) => {
             const data = await s3.upload(params).promise();
             profilePicturePath = data.Location;
         } else {
-            profilePicturePath = "/public/default_profile.webp";
+            profilePicturePath = "https://ui-avatars.com/api/?name=" + username + "&background=random&size=128";
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);

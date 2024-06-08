@@ -9,7 +9,7 @@ export default function LoginBox() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const { setUser, setAccessToken } = useContext(UserContext);
+    const { login } = useContext(UserContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,7 +26,7 @@ export default function LoginBox() {
 
         if (data.success) {
             alert("Login successful");
-            setAccessToken(data.accessToken);
+            login(data.accessToken);
 
             router.push("/list");
         } else {

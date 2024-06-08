@@ -4,10 +4,10 @@
 import "./NavBar.css";
 
 import React from "react";
-import path from "path";
 import { useContext } from "react";
 import UserContext from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import LogoutButton from "./buttons/LogoutButton";
 
 export default function NavBar() {
     const router = useRouter();
@@ -40,7 +40,9 @@ export default function NavBar() {
             </span>
             {user ? (
                 <div className="flex items-center">
-                    <button>Log out</button>
+                    <div className="mr-2">
+                        <LogoutButton />
+                    </div>
                     <img
                         src={user.profilePicture}
                         alt="Profile"

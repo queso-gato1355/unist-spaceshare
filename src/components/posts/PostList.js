@@ -22,7 +22,7 @@ export default function PostList() {
 
     useEffect(() => {
         fetchPosts();
-        const id = setInterval(fetchPosts, 1000);
+        const id = setInterval(fetchPosts, 10000);
         setIntervalId(id);
 
         return () => clearInterval(intervalId);

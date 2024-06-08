@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import path from "path";
 import fs from "fs";
 import AWS from "../../../../aws.config";
+import { emailValidate } from "../../../lib/utils/emailValidation";
 
 const s3 = new AWS.S3();
 
@@ -30,12 +31,17 @@ export const POST = async (req) => {
         const email = formData.get("email");
         const username = formData.get("username");
         const password = formData.get("password");
+        const confirmPassword = formData.get("confirmPassword");
+        const contactLink = formData.get("contactLink");
         const profilePicture = formData.get("profilePicture");
 
-        if (!username || !password || !email) {
+        if (!username || !password || !email || !contactLink ||
+            username.length < 5 || password.length < 8 || contactLink.length <= 0 || !emailValidate(email) ||
+            username.length > 30 || password.length > 20 || password !== confirmPassword
+        ) {
             return new Response(
                 JSON.stringify({
-                    error: "Username, password, and email are required",
+                    error: "Validation failed. Please check your input.",
                 }),
                 { status: 400 }
             );
@@ -77,6 +83,7 @@ export const POST = async (req) => {
             username,
             password: hashedPassword,
             email,
+            contactLink,
             profilePicture: profilePicturePath,
         };
 

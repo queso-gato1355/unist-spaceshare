@@ -1,44 +1,100 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import ImageSelection from "./inputs/ImageSelection";
+import ConditionalLabelInput from "./inputs/ConditionalLabelInput";
+import { emailValidate } from "../utils/emailValidation";
 
 export default function RegisterBox() {
     const router = useRouter();
 
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [profilePicture, setProfilePicture] = useState(null);
+    const [userFormData, setUserFormData] = useState({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        contactLink: "",
+        profilePicture: null,
+    });
 
-    const [isEmailValid, setIsEmailValid] = useState(true);
-    const [isPasswordValid, setIsPasswordValid] = useState(true);
-    const [isSamePassword, setIsSamePassword] = useState(true);
+    const [userFormDataValidity, setUserFormDataValidity] = useState({
+        username: true,
+        contactLink: true,
+        email: true,
+        password: true,
+        confirmPassword: true,
+        isPass: true,
+    });
+
+    const handleFormData = (key, value) => {
+        setUserFormData((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const handleValidity = (key, value) => {
+        setUserFormDataValidity((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const checkValidity = () => {
+        handleValidity("email", EmailValidation(userFormData.email));
+        handleValidity(
+            "username",
+            userFormData.username.length >= 5 &&
+                userFormData.username.length <= 30
+        );
+        handleValidity("contactLink", userFormData.contactLink.length > 0);
+        handleValidity(
+            "password",
+            userFormData.password.length >= 8 &&
+                userFormData.password.length <= 20
+        );
+        handleValidity(
+            "confirmPassword",
+            userFormData.password === userFormData.confirmPassword
+        );
+
+        handleValidity(
+            "isPass",
+            userFormDataValidity.email &&
+                userFormDataValidity.username &&
+                userFormDataValidity.password &&
+                userFormDataValidity.confirmPassword
+        );
+    };
+
+    const onChangeFormData = (e) => {
+        const { name, value } = e.target;
+        handleFormData(name, value);
+    };
+
+    const onChangeProfilePicture = (e) => {
+        handleFormData("profilePicture", e.target.files[0]);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validateEmail(email)) {
-            setIsEmailValid(false);
-            return;
-        }
-        if (password.length < 8 || password.length > 20) {
-            setIsPasswordValid(false);
-            return;
-        }
-        if (password !== confirmPassword) {
-            setIsSamePassword(false);
+        checkValidity();
+
+        if (!userFormDataValidity.isPass) {
             return;
         }
 
         const formdata = new FormData();
-        formdata.append("email", email);
-        formdata.append("username", username);
-        formdata.append("password", password);
-        
-        if (profilePicture)
-            formdata.append("profilePicture", profilePicture);
+        formdata.append("email", userFormData.email);
+        formdata.append("username", userFormData.username);
+        formdata.append("password", userFormData.password);
+        formdata.append("confirmPassword", userFormData.confirmPassword);
+        formdata.append("contactLink", userFormData.contactLink);
+
+        if (userFormData.profilePicture)
+            formdata.append("profilePicture", userFormData.profilePicture);
 
         const res = await fetch("/api/register", {
             method: "POST",
@@ -55,102 +111,77 @@ export default function RegisterBox() {
         }
     };
 
-    function validateEmail(email) {
-        const re = /\S+@\S+\.\S+/;
-        return re.test(email);
-    }
-
     return (
         <form
             onSubmit={handleSubmit}
-            className="space-y-4 flex flex-wrap"
+            className="space-y-4 flex flex-wrap w-full"
         >
-            <div className="flex justify-center w-full mb-4">
-                <div className="flex flex-col justify-center items-center mr-10">
-                    <div>
-                        <img
-                            src={profilePicture ? URL.createObjectURL(profilePicture) : "https://placehold.co/200x200"}
-                            alt="Profile"
-                            className="w-20 h-20 mb-4 rounded-full"
-                        />
-                    </div>
-                    <input
-                        type="file"
-                        id="profilePicture"
-                        className="hidden"
-                        onChange={(e) =>
-                            setProfilePicture(e.target.files[0])
-                        }
-                    />
-                    <label
-                        htmlFor="profilePicture"
-                        className="bg-blue-500 hover:bg-blue-400 text-white transition-all border p-2 w-full rounded cursor-pointer"
-                    >
-                        Select...
-                    </label>
-                </div>
-                <div className="flex flex-col justify-center items-center">
-                    {!isEmailValid && (
-                        <p className="text-red-500 mb-2">
-                            Invalid email address.
-                        </p>
-                    )}
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        className={`border transition-all p-2 mb-2 w-full rounded ${
-                            isEmailValid ? "" : "border-red-500"
-                        }`}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        className="border transition-all p-2 mb-2 w-full rounded"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    {!isPasswordValid ? (
-                        <p className="text-red-500 mb-2">
-                            Password should be more than 8 words and
-                            less than 20 words.
-                        </p>
-                    ) : (
-                        <p className="text-gray-500 text-xs mb-2">
-                            Password should be more than 8 words and
-                            less than 20 words.
-                        </p>
-                    )}
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className={`border transition-all p-2 mb-2 w-full rounded ${
-                            isPasswordValid ? "" : "border-red-500"
-                        }`}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    {!isSamePassword && (
-                        <p className="text-red-500">
-                            Password does not match.
-                        </p>
-                    )}
-                    <input
-                        type="password"
-                        placeholder="Confirm Password"
-                        className={`border transition-all p-2 w-full rounded ${
-                            isSamePassword ? "" : "border-red-500"
-                        }`}
-                        value={confirmPassword}
-                        onChange={(e) =>
-                            setConfirmPassword(e.target.value)
-                        }
+            <div className="flex flex-col justify-center w-full mb-4">
+                <div className="ml-10 mr-10">
+                    <ImageSelection
+                        onChange={onChangeProfilePicture}
+                        value={userFormData.profilePicture}
+                        placeholderImage="https://placehold.co/200x200"
                     />
                 </div>
+                <ConditionalLabelInput
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={userFormData.email}
+                    onChange={onChangeFormData}
+                    error={!userFormDataValidity.email}
+                    errorMessage="Invalid email address."
+                    showUpper
+                />
+                <ConditionalLabelInput
+                    label="Username"
+                    name="username"
+                    type="text"
+                    value={userFormData.username}
+                    onChange={onChangeFormData}
+                    error={!userFormDataValidity.username}
+                    errorMessage="Username should be between 5 and 30 characters."
+                    showUpper
+                />
+                <ConditionalLabelInput
+                    label="Contact Link"
+                    name="contactLink"
+                    type="text"
+                    value={userFormData.contactLink}
+                    onChange={onChangeFormData}
+                    error={!userFormDataValidity.contactLink}
+                    errorMessage="Link should be valid."
+                    showUpper
+                />
+                <ConditionalLabelInput
+                    label="Password"
+                    name="password"
+                    type="password"
+                    value={userFormData.password}
+                    onChange={onChangeFormData}
+                    error={!userFormDataValidity.password}
+                    errorMessage="Password should be between 8 and 20 characters."
+                    showUpper
+                />
+                <ConditionalLabelInput
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    type="password"
+                    value={userFormData.confirmPassword}
+                    onChange={onChangeFormData}
+                    error={!userFormDataValidity.confirmPassword}
+                    errorMessage="Password does not match."
+                    showUpper
+                />
             </div>
             <div className="w-full">
-                <button type="submit" className="bg-blue-600 hover:bg-blue-500 w-40 hover:w-44 transition-all text-white px-4 py-2 rounded">Register!</button>
+                <button
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-500 hover:shadow-lg w-40 transition-all text-white px-4 py-2 rounded"
+                >
+                    Register!
+                </button>
             </div>
         </form>
     );

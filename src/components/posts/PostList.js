@@ -35,8 +35,7 @@ export default function PostList() {
                 <span>Filter</span>
             </div>
             <div className="space-y-4">
-                {posts &&
-                    posts.map((post) => <Post key={post.id} post={post} />)}
+                {posts && posts.map((post) => <Post key={post._id} post={post} />)}
             </div>
         </>
     );

@@ -1,7 +1,7 @@
 import formatTime from "@/utils/unixToTime";
 import { useRouter } from "next/navigation";
 
-function Post({ post }) {
+function Post({ key, post }) {
     const router = useRouter();
 
     // if it clicked, move to the detail page
@@ -10,7 +10,9 @@ function Post({ post }) {
     };
 
     return (
-        <div className="bg-white shadow-md hover:shadow-xl transition-all rounded-lg p-4 mb-4 relative max-w-[700px] flex flex-col md:flex-row cursor-pointer" onClick={handleClick}>
+        <div key={key}
+        onClick={handleClick}
+        className="bg-white shadow-md hover:shadow-xl transition-all rounded-lg p-4 mb-4 relative max-w-[700px] flex flex-col md:flex-row cursor-pointer">
             <div className="w-full md:w-1/3 mb-4 md:mb-0">
                 {!post.image ? (
                     <div className="bg-gray-300 h-48 flex items-center justify-center">

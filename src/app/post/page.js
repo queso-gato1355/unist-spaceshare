@@ -250,7 +250,8 @@ export default function PostPage() {
                                 onChange={handleChange}
                             ></input>
                         </div>
-                        <div className="flex-col">
+                        <div className="flex-col w-full">
+                            <h4>Small Box Price</h4>
                             <input
                                 type="text"
                                 name="price1"
@@ -259,26 +260,29 @@ export default function PostPage() {
                                 value={formData.price[0]}
                                 onChange={handleChange}
                             />
+                            <h4>Medium Box Price</h4>
                             <input
                                 type="text"
                                 name="price2"
-                                placeholder="Midium Box Price"
+                                placeholder="Medium Box Price"
                                 className="border p-2 w-full rounded mb-2"
                                 value={formData.price[1]}
                                 onChange={handleChange}
                             />
+                            <h4>Large Box Price</h4>
                             <input
                                 type="text"
                                 name="price3"
-                                placeholder="Midium Box Price"
+                                placeholder="Large Box Price"
                                 className="border p-2 w-full rounded mb-2"
                                 value={formData.price[2]}
                                 onChange={handleChange}
                             />
+                            <h4>XL Box Price</h4>
                             <input
                                 type="text"
                                 name="price4"
-                                placeholder="Extra Box Price"
+                                placeholder="XL Box Price"
                                 className="border p-2 w-full rounded"
                                 value={formData.price[3]}
                                 onChange={handleChange}
@@ -288,6 +292,7 @@ export default function PostPage() {
                     <button
                         type="submit"
                         className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+                        
                     >
                         Post it!
                     </button>

@@ -2,7 +2,7 @@ import { connectToDatabase } from "../../../lib/mongodb";
 import bcrypt from "bcryptjs";
 import path from "path";
 import fs from "fs";
-import AWS from "../../../../aws.config";
+import AWS from "@/../../aws.config";
 import emailValidate from "@/utils/emailValidation";
 
 const s3 = new AWS.S3();

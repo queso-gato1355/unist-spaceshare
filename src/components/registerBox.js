@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageSelection from "./inputs/ImageSelection";
 import ConditionalLabelInput from "./inputs/ConditionalLabelInput";
-import { emailValidate } from "../utils/emailValidation";
+import emailValidate from "@/utils/emailValidation";
 
 export default function RegisterBox() {
     const router = useRouter();
@@ -42,7 +42,7 @@ export default function RegisterBox() {
     };
 
     const checkValidity = () => {
-        handleValidity("email", EmailValidation(userFormData.email));
+        handleValidity("email", emailValidate(userFormData.email));
         handleValidity(
             "username",
             userFormData.username.length >= 5 &&

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.2.5",
     "aws-sdk": "^2.1636.0",
     "bcryptjs": "^2.4.3",
     "firebase": "^10.12.2",
@@ -18,7 +19,8 @@
     "next-connect": "^1.0.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-loading": "^2.0.3"
+    "react-loading": "^2.0.3",
+    "react-redux": "^9.1.2"
   },
   "devDependencies": {
     "postcss": "^8",

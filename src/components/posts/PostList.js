@@ -3,6 +3,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import Post from "@/components/posts/Post";
+import FilterPage from "../filter";
 
 export default function PostList() {
     const [posts, setPosts] = useState([]);
@@ -32,7 +33,8 @@ export default function PostList() {
         <>
             <div className="flex justify-between items-center mb-4">
                 <span>{`total ${posts ? posts.length : 0} posts`}</span>
-                <span>Filter</span>
+                Filter
+                <span><FilterPage></FilterPage></span>
             </div>
             <div className="space-y-4">
                 {posts && posts.map((post) => <Post key={post._id} post={post} />)}

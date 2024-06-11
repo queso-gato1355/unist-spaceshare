@@ -16,9 +16,9 @@ export default function FilterPage({ handleFilter }) {
         dispatch(actions.filterParam.locChange({ location: event.target.value }));
     };
 
-    const handleBoxChange = (index, delta) => () => {
-        dispatch(actions.filterParam.boxChange({ idx: index, delta }));
-    };
+    // const handleBoxChange = (index, delta) => () => {
+    //     dispatch(actions.filterParam.boxChange({ idx: index, delta }));
+    // };
 
     const handlePriceChange = (index) => (event) => {
         dispatch(actions.filterParam.priceChange({idx: index, newPrice: event.target.value}));
@@ -69,11 +69,11 @@ export default function FilterPage({ handleFilter }) {
             </div>
             <div>
                 <h4>Box Numbers & Prices:</h4>
-                {filterParam.boxNum.map((num, index) => (
+                {filterParam.boxPrices.map((num, index) => (
                     <div key={index}>
-                        <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button>
-                        <span> Box {index + 1}: {num} </span>
-                        <button onClick={handleBoxChange(index, 1)}>+</button>
+                        {/* <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button> */}
+                        {/* <span> Box {index + 1}: {num} </span> */}
+                        {/* <button onClick={handleBoxChange(index, 1)}>+</button> */}
                         <input
                             type='number'
                             value={filterParam.boxPrices[index]}

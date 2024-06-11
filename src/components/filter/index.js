@@ -4,20 +4,24 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { actions } from '@/components/store';
 
-export default function FilterPage() {
+export default function FilterPage({ handleFilter }) {
     const dispatch = useDispatch();
-    const filter = useSelector(state => state.filter);
+    const filterParam = useSelector(state => state.filter);
 
     const handleRoleChange = () => {
-        dispatch(actions.filter.roleChange());
+        dispatch(actions.filterParam.roleChange());
     };
 
     const handleLocationChange = (event) => {
-        dispatch(actions.filter.locChange({ location: event.target.value }));
+        dispatch(actions.filterParam.locChange({ location: event.target.value }));
     };
 
-    const handleBoxChange = (index, delta) => () => {
-        dispatch(actions.filter.boxChange({ idx: index, delta }));
+    // const handleBoxChange = (index, delta) => () => {
+    //     dispatch(actions.filterParam.boxChange({ idx: index, delta }));
+    // };
+
+    const handlePriceChange = (index) => (event) => {
+        dispatch(actions.filterParam.priceChange({idx: index, newPrice: event.target.value}));
     };
 
     return (
@@ -27,30 +31,59 @@ export default function FilterPage() {
                 <label>
                     <input
                         type="checkbox"
-                        checked={filter.forBuyer}
+                        checked={filterParam.forBuyer}
                         onChange={handleRoleChange}
                     />
                     Are you a buyer?
                 </label>
             </div>
-            <div>
+            {/* <div>
                 <input
                     type="text"
-                    value={filter.location}
-                    onChange={handleLocationChange}
-                    placeholder="Enter location"
+                    value={filterParam.location}
+                    onChange={}
+                    placeholder="Enter location. e.g. 301"
                 />
+            </div> */}
+
+            <div>
+            <select
+                value={filterParam.location}
+                onChange={handleLocationChange}
+                name="statusCode"
+                id="statusCode"
+                placeholder="Enter location. e.g. 301"
+            >
+                <option value="" >Any Location (default)</option> {/* Placeholder for "null" disabled */}
+                <option value="301">301</option>
+                <option value="302">302</option>
+                <option value="303">303</option>
+                <option value="304">304</option>
+                <option value="305">305</option>
+                <option value="306">306</option>
+                <option value="307">307</option>
+                <option value="308">308</option>
+                <option value="309">309</option>
+                {/* <option value="others">others</option> */}
+            </select>
             </div>
             <div>
-                <h4>Box Numbers:</h4>
-                {filter.boxNum.map((num, index) => (
+                <h4>Box Numbers & Prices:</h4>
+                {filterParam.boxPrices.map((num, index) => (
                     <div key={index}>
-                        <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button>
-                        <span> Box {index + 1}: {num} </span>
-                        <button onClick={handleBoxChange(index, 1)}>+</button>
+                        {/* <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button> */}
+                        {/* <span> Box {index + 1}: {num} </span> */}
+                        {/* <button onClick={handleBoxChange(index, 1)}>+</button> */}
+                        <input
+                            type='number'
+                            value={filterParam.boxPrices[index]}
+                            onChange={handlePriceChange(index)}
+                            placeholder='0'
+                        />
                     </div>
                 ))}
             </div>
+            <button onClick={handleFilter(filterParam)}>Search!</button>
         </div>
     );
 };

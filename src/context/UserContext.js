@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
 
     async function fetchUser() {
         try {
-            const res = await fetch("/api/user", {
+            const res = await fetch("/api/currentUser", {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },

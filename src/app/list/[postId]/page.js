@@ -2,6 +2,24 @@
 import { connectToDatabase } from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
+const getUserById = async (userId) => {
+    // const baseURL = "http://localhost:3000";
+    // const url = new URL(`/api/user?id=${userId}`, baseURL);
+
+    // const response = await fetch(`/api/user?id=${userId}`, {
+    //     method: "GET",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //     },
+    // });
+    // if (!response.ok) {
+    //     console.error('Failed to fetch user:', response.statusText);
+    //     return null;
+    // }
+    // const data = await response.json();
+    // return data.user;
+}
+
 async function getPostById(postId) {
     const { db } = await connectToDatabase();
     const post = await db
@@ -33,7 +51,7 @@ export default async function DetailedPage({ params }) {
     //     occupation: 'Buyer',
     //     state: false
     //   }
-      
+
 
     console.log(post);
 
@@ -42,6 +60,9 @@ export default async function DetailedPage({ params }) {
             <h1>Title: {post.title}</h1>
             <h1>Location: {post.location}</h1>
             <p>Description: {post.description}</p>
+            <p>userId: {post.userId}</p>
+
+            <p>{getUserById(post.userId).contactLink}</p>
             {/* 여기에 추가적인 게시글 정보를 렌더링할 수 있습니다. */}
         </div>
     );

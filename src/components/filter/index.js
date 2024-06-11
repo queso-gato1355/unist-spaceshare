@@ -68,7 +68,7 @@ export default function FilterPage({ handleFilter }) {
             </select>
             </div>
             <div>
-                <h4>Box Numbers & Prices:</h4>
+                <h4>Box Prices:</h4>
                 {filterParam.boxPrices.map((num, index) => (
                     <div key={index}>
                         {/* <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button> */}

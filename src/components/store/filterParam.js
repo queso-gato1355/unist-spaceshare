@@ -9,7 +9,7 @@ const filterSlice = createSlice({
         timeStart: null,
         timeEnd: null,
         location: "",
-        boxNum: [0,0,0,0],
+        // boxNum: [0,0,0,0],
         boxPrices: [0, 0, 0, 0], // integers
     },
     reducers: {
@@ -25,10 +25,10 @@ const filterSlice = createSlice({
         locChange(state, action) { // location
             state.location = action.payload.location;
         },
-        boxChange(state, action) { // idx, delta
-            const idx = action.payload.idx;
-            state.boxNum[idx] = state.boxNum[idx] + action.payload.delta;
-        },
+        // boxChange(state, action) { // idx, delta
+        //     const idx = action.payload.idx;
+        //     state.boxNum[idx] = state.boxNum[idx] + action.payload.delta;
+        // },
         priceChange(state, action) { // idx, newPrice
             const idx = action.payload.idx;
             state.boxPrices[idx] = action.payload.newPrice;

@@ -7,7 +7,7 @@ import FilterPage from "../filter";
 
 export default function PostList() {
     const [posts, setPosts] = useState([]);
-    const [intervalId, setIntervalId] = useState(null);
+    // const [intervalId, setIntervalId] = useState(null);
     const [dFilter, setFilter] = useState(()=>()=>true);
 
     // get the posts once a second

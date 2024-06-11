@@ -1,7 +1,7 @@
 import Image from "next/image";
 import plusIcon from "/public/plusIcon.png";
 
-export default function ImageSelection({ onChange, value, placeholderImage }) {
+export default function ProfileImageSelection({ onChange, value, placeholderImage }) {
     return (
         <div className="flex felx-row justify-center items-center relative">
             <img

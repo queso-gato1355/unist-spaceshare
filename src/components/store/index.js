@@ -1,6 +1,6 @@
 // components/store/index.js
 import { configureStore } from '@reduxjs/toolkit';
-import filterSlice from './filter';
+import filterSlice from './filterParam';
 
 const store = configureStore({
     reducer: {
@@ -10,7 +10,7 @@ const store = configureStore({
 });
 
 export const actions = {
-    filter: filterSlice.actions,
+    filterParam: filterSlice.actions,
     // ui: uiSlice.actions,
 };
 

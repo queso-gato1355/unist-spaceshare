@@ -49,7 +49,7 @@ export default function PostList() {
             const data = await res.json();
             setPosts(data.posts.filter(dFilter));
         };
-        console.log('dFilter has been updated:', dFilter);
+        // console.log('dFilter has been updated:', dFilter);
         // your existing code...
     
         fetchPosts();

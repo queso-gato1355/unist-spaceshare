@@ -36,13 +36,6 @@ export async function connectToDatabase() {
 // close the connection
 export async function closeConnection() {
     if (cachedClient) {
-        await cachedClient.close();
-    }
-}
-
-// terminate the connection
-export async function terminateConnection() {
-    if (cachedClient) {
         try {
             await cachedClient.close();
             cachedClient = null;

@@ -16,8 +16,8 @@ export default function ListPage() {
                     >
                         Make a form!
                     </VerificationButtonLink>
-                    <PostList />
                 </div>
+                <PostList />
             </div>
         </Providers>
     );

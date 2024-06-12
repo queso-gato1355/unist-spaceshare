@@ -10,29 +10,6 @@ export default function PostList() {
     // const [intervalId, setIntervalId] = useState(null);
     const [dFilter, setFilter] = useState(()=>()=>true);
 
-    // get the posts once a second
-    // const fetchPosts = async () => {
-    //     const res = await fetch("/api/shares", {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //     });
-    //     const data = await res.json();
-    //     setPosts((posts)=>{
-    //         console.log(data.posts);
-    //         return data.posts.filter(dFilter);
-    //     });
-    // };
-
-    // useEffect(() => {
-    //     fetchPosts();
-    //     const id = setInterval(fetchPosts, 10000);
-    //     setIntervalId(id);
-
-    //     return () => clearInterval(intervalId);
-    // }, []);
-
     const createFilterFunction = (filterParam) => (post) => {
         return post
             && (post.occupation === 'Seller') === filterParam.forBuyer
@@ -47,7 +24,7 @@ export default function PostList() {
         const fetchPosts = async () => {
             const res = await fetch("/api/shares");
             const data = await res.json();
-            setPosts(data.posts.filter(dFilter));
+            setPosts(data.posts ? data.posts.filter(dFilter) : []);
         };
         // console.log('dFilter has been updated:', dFilter);
         // your existing code...
@@ -65,18 +42,18 @@ export default function PostList() {
     
 
     return (
-        <>
-            <div className="flex justify-between items-center mb-4">
-                <span>{`total ${posts ? posts.length : 0} posts`} Filter</span>
-                <span><FilterPage handleFilter={(filterParam)=>()=>{
+        <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full justify-between items-center mb-4">
+                <FilterPage handleFilter={(filterParam)=>()=>{
                     setFilter(() => createFilterFunction(filterParam));
                     // console.log('dFilter set!');
-                }}></FilterPage></span>
+                }}></FilterPage>
             </div>
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
+                <span>{`total ${posts ? posts.length : 0} posts`} Filter</span>
                 {posts && posts.map((post) => <Post key={post._id} post={post} />)}
-            </div>
-        </>
+            </div> */}
+        </div>
     );
 }
 /*

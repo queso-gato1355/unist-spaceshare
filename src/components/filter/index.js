@@ -24,67 +24,107 @@ export default function FilterPage({ handleFilter }) {
         dispatch(actions.filterParam.priceChange({idx: index, newPrice: event.target.value}));
     };
 
-    return (
-        <div>
-            <h3>Filter Component</h3>
-            <div>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={filterParam.forBuyer}
-                        onChange={handleRoleChange}
-                    />
-                    Are you a buyer?
-                </label>
-            </div>
-            {/* <div>
-                <input
-                    type="text"
-                    value={filterParam.location}
-                    onChange={}
-                    placeholder="Enter location. e.g. 301"
-                />
-            </div> */}
+    const boxNames=["small", "medium", "large", "XL"];
 
-            <div>
-            <select
-                value={filterParam.location}
-                onChange={handleLocationChange}
-                name="statusCode"
-                id="statusCode"
-                placeholder="Enter location. e.g. 301"
-            >
-                <option value="" >Any Location (default)</option> {/* Placeholder for "null" disabled */}
-                <option value="301">301</option>
-                <option value="302">302</option>
-                <option value="303">303</option>
-                <option value="304">304</option>
-                <option value="305">305</option>
-                <option value="306">306</option>
-                <option value="307">307</option>
-                <option value="308">308</option>
-                <option value="309">309</option>
-                {/* <option value="others">others</option> */}
-            </select>
-            </div>
-            <div>
-                <h4>Box Prices:</h4>
-                {filterParam.boxPrices.map((num, index) => (
-                    <div key={index}>
-                        {/* <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button> */}
-                        {/* <span> Box {index + 1}: {num} </span> */}
-                        {/* <button onClick={handleBoxChange(index, 1)}>+</button> */}
-                        <input
-                            type='number'
-                            value={filterParam.boxPrices[index]}
-                            onChange={handlePriceChange(index)}
-                            placeholder='0'
-                        />
+    return (
+        <>
+            <h3>Filter</h3>
+            <div className='flex flex-col md:flex-row w-full space-x-0 md:space-x-4 mx-auto'>
+                <div className='flex flex-col w-full md:w-1/4 space-y-4'>
+                    <div>
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={filterParam.forBuyer}
+                                onChange={handleRoleChange}
+                            />
+                            Are you a buyer?
+                        </label>
                     </div>
-                ))}
+                    {/* <div>
+                        <input
+                            type="text"
+                            value={filterParam.location}
+                            onChange={}
+                            placeholder="Enter location. e.g. 301"
+                        />
+                    </div> */}
+
+                    <div className='mx-4'>
+                        <label>
+                            Location
+                            <select
+                                value={filterParam.location}
+                                onChange={handleLocationChange}
+                                name="statusCode"
+                                id="statusCode"
+                                placeholder="Enter location. e.g. 301"
+                            >
+                                <option value="" >Any Location (default)</option> {/* Placeholder for "null" disabled */}
+                                <option value="301">301</option>
+                                <option value="302">302</option>
+                                <option value="303">303</option>
+                                <option value="304">304</option>
+                                <option value="305">305</option>
+                                <option value="306">306</option>
+                                <option value="307">307</option>
+                                <option value="308">308</option>
+                                <option value="309">309</option>
+                                {/* <option value="others">others</option> */}
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div className='flex flex-col w-full md:w-1/2 space-y-4'>
+                    <div>
+                        <h4>Box Prices:</h4>
+                        <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-8">
+                            <div className='flex flex-col w-full md:w-1/2 space-y-4'>
+                                {[0,1].map((index) => (
+                                    <div key={index} className='flex items-center'>
+                                        {/* <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button> */}
+                                        {/* <span> Box {index + 1}: {num} </span> */}
+                                        {/* <button onClick={handleBoxChange(index, 1)}>+</button> */}
+                                        <label className='mr-2 min-w-[60px]'>
+                                            {boxNames[index]}
+                                        </label>
+                                        <input
+                                            type='number'
+                                            className='flex-1'
+                                            value={filterParam.boxPrices[index]}
+                                            onChange={handlePriceChange(index)}
+                                            placeholder='0'
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                            <div className='flex flex-col w-full md:w-1/2 space-y-4'>
+                                {[2, 3].map((index) => (
+                                    <div key={index} className='flex items-center'>
+                                        {/* <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button> */}
+                                        {/* <span> Box {index + 1}: {num} </span> */}
+                                        {/* <button onClick={handleBoxChange(index, 1)}>+</button> */}
+                                        <label className='mr-2 min-w-[60px]'>
+                                            {boxNames[index]}
+                                        </label>
+                                        <input
+                                            type='number'
+                                            className='flex-1'
+                                            value={filterParam.boxPrices[index]}
+                                            onChange={handlePriceChange(index)}
+                                            placeholder='0'
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='flex w-full md:w-1/4 items-center bg-slate-300 justify-center'>
+                    <button onClick={handleFilter(filterParam)}>Search!</button>
+                </div>
             </div>
-            <button onClick={handleFilter(filterParam)}>Search!</button>
-        </div>
+        </>
     );
 };
 

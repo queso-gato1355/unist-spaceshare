@@ -1,4 +1,4 @@
-import { connectToDatabase } from "../../../lib/mongodb";
+import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 import { verifyAccessToken } from "../../../utils/jwtToken";
 import instanceValidation from "../../../utils/instanceValidation";
 import AWS from "@/../../aws.config";

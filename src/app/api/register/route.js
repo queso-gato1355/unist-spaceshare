@@ -7,12 +7,6 @@ import emailValidate from "@/utils/emailValidation";
 
 const s3 = new AWS.S3();
 
-const uploadDir = path.join(process.cwd(), "public", "uploads");
-
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
 const isMultipartFormData = (req) => {
     const contentType = req.headers.get("Content-Type") || "";
     return contentType.startsWith("multipart/form-data");

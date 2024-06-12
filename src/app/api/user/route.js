@@ -26,7 +26,7 @@ export async function GET(req) {
         const userCollection = db.collection("users");
         const user = await userCollection.findOne(
             { _id: new ObjectId(decoded.id) },
-            { projection: { username: 1, email: 1, profilePicture: 1 } }
+            { projection: { username: 1, email: 1, contactLink: 1, profilePicture: 1 } }
         );
 
         if (!user) {

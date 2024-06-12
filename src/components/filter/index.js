@@ -1,12 +1,13 @@
 // "use server";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { actions } from '@/components/store';
 
 export default function FilterPage({ initFilter, handleFilter }) {
     const dispatch = useDispatch();
     const filterParam = useSelector(state => state.filter);
+    const [show, setShow] = useState(true);
 
     const handleRoleChange = () => {
         dispatch(actions.filterParam.roleChange());
@@ -16,10 +17,6 @@ export default function FilterPage({ initFilter, handleFilter }) {
         dispatch(actions.filterParam.locChange({ location: event.target.value }));
     };
 
-    // const handleBoxChange = (index, delta) => () => {
-    //     dispatch(actions.filterParam.boxChange({ idx: index, delta }));
-    // };
-
     const handlePriceChange = (index) => (event) => {
         dispatch(actions.filterParam.priceChange({idx: index, newPrice: event.target.value}));
     };
@@ -28,8 +25,8 @@ export default function FilterPage({ initFilter, handleFilter }) {
 
     return (
         <>
-            <h3>Filter</h3>
-            <div className='flex flex-col md:flex-row bg-pink-50 w-full space-y-4 md:space-y-0 space-x-0 md:space-x-4 mx-auto justify-between items-center mb-4'>
+            <button className="flex justify-start" onClick={()=>setShow(!show)}>Filter ({show && "shown"}{!show && "hidden"})</button>
+            {show && <div className='flex flex-col md:flex-row bg-pink-50 w-full space-y-4 md:space-y-0 space-x-0 md:space-x-4 mx-auto justify-between items-center mb-4'>
                 <div className='flex flex-col w-full md:w-1/4 space-y-4'>
                     <div>
                         <label>
@@ -118,7 +115,7 @@ export default function FilterPage({ initFilter, handleFilter }) {
                     <button className="flex min-h-8 bg-slate-300 justify-center items-center" onClick={initFilter}>Find All!</button>
                     <button className="flex min-h-8 bg-slate-300 justify-center items-center" onClick={handleFilter(filterParam)}>Search!</button>
                 </div>
-            </div>
+            </div>}
         </>
     );
 };

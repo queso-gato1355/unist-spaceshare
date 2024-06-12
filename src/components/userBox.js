@@ -2,7 +2,7 @@
 
 import UserContext from "@/context/UserContext";
 import { useContext, useEffect, useState } from "react";
-import ImageSelection from "./inputs/ImageSelection";
+import ImageSelection from "./inputs/ProfileImageSelection";
 import ConditionalLabelInput from "./inputs/ConditionalLabelInput";
 import { useRouter } from "next/navigation";
 import emailValidate from "@/utils/emailValidation";

@@ -43,16 +43,16 @@ export default function PostList() {
 
     return (
         <div className="flex flex-col w-full">
-            <div className="flex flex-col w-full justify-between items-center mb-4">
+            <div className="flex flex-col w-full">
                 <FilterPage handleFilter={(filterParam)=>()=>{
                     setFilter(() => createFilterFunction(filterParam));
                     // console.log('dFilter set!');
                 }}></FilterPage>
             </div>
-            {/* <div className="space-y-4">
-                <span>{`total ${posts ? posts.length : 0} posts`} Filter</span>
+            <div className="space-y-4">
+                <span>{`total ${posts ? posts.length : 0} posts`}</span>
                 {posts && posts.map((post) => <Post key={post._id} post={post} />)}
-            </div> */}
+            </div>
         </div>
     );
 }

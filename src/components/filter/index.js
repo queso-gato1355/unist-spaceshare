@@ -29,7 +29,7 @@ export default function FilterPage({ handleFilter }) {
     return (
         <>
             <h3>Filter</h3>
-            <div className='flex flex-col md:flex-row w-full space-x-0 md:space-x-4 mx-auto'>
+            <div className='flex flex-col md:flex-row bg-pink-50 w-full space-y-4 md:space-y-0 space-x-0 md:space-x-4 mx-auto justify-between items-center mb-4'>
                 <div className='flex flex-col w-full md:w-1/4 space-y-4'>
                     <div>
                         <label>
@@ -50,9 +50,9 @@ export default function FilterPage({ handleFilter }) {
                         />
                     </div> */}
 
-                    <div className='mx-4'>
+                    <div>
                         <label>
-                            Location
+                            Location: 
                             <select
                                 value={filterParam.location}
                                 onChange={handleLocationChange}
@@ -82,15 +82,12 @@ export default function FilterPage({ handleFilter }) {
                             <div className='flex flex-col w-full md:w-1/2 space-y-4'>
                                 {[0,1].map((index) => (
                                     <div key={index} className='flex items-center'>
-                                        {/* <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button> */}
-                                        {/* <span> Box {index + 1}: {num} </span> */}
-                                        {/* <button onClick={handleBoxChange(index, 1)}>+</button> */}
                                         <label className='mr-2 min-w-[60px]'>
                                             {boxNames[index]}
                                         </label>
                                         <input
                                             type='number'
-                                            className='flex-1'
+                                            className='flex w-full md:mr-1'
                                             value={filterParam.boxPrices[index]}
                                             onChange={handlePriceChange(index)}
                                             placeholder='0'
@@ -101,15 +98,12 @@ export default function FilterPage({ handleFilter }) {
                             <div className='flex flex-col w-full md:w-1/2 space-y-4'>
                                 {[2, 3].map((index) => (
                                     <div key={index} className='flex items-center'>
-                                        {/* <button onClick={handleBoxChange(index, -1)} disabled={num <= 0}>-</button> */}
-                                        {/* <span> Box {index + 1}: {num} </span> */}
-                                        {/* <button onClick={handleBoxChange(index, 1)}>+</button> */}
                                         <label className='mr-2 min-w-[60px]'>
                                             {boxNames[index]}
                                         </label>
                                         <input
                                             type='number'
-                                            className='flex-1'
+                                            className='flex w-full md:mr-1'
                                             value={filterParam.boxPrices[index]}
                                             onChange={handlePriceChange(index)}
                                             placeholder='0'
@@ -120,9 +114,7 @@ export default function FilterPage({ handleFilter }) {
                         </div>
                     </div>
                 </div>
-                <div className='flex w-full md:w-1/4 items-center bg-slate-300 justify-center'>
-                    <button onClick={handleFilter(filterParam)}>Search!</button>
-                </div>
+                <button className='flex w-full h-full md:w-1/4 bg-slate-300 justify-center' onClick={handleFilter(filterParam)}>Search!</button>
             </div>
         </>
     );

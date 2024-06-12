@@ -1,19 +1,43 @@
-// src/app/api/user/route.js
+
+// /app/api/user/route.js
+// 쿼리 파라미터로 user id를 입력하면 그에 따른 user 객체를 반환한다
+// GET /api/user?userId={userId}
 import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
+import { verifyAccessToken } from "@/utils/jwtToken";
 
-// "use client";
+export async function GET(req, {params}) {
 
-export async function GET(req) {
+    const auth = req.headers.get("Authorization");
+
+    if (!auth || !auth.startsWith("Bearer ")) {
+        return new Response(JSON.stringify({ user: null, error: "Authorization error" }), {
+            status: 401,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    }
+
+    const token = auth.split(" ")[1];
+
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = verifyAccessToken(token);
+
+        if (!decoded) {
+            return new Response(JSON.stringify({ user: null, error: "Invalid token" }), {
+                status: 401,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+
         const { db } = await connectToDatabase();
         const userCollection = db.collection("users");
         const user = await userCollection.findOne(
-            { _id: new ObjectId(decoded.id) },
-            { projection: { username: 1, email: 1, contactLink: 1, profilePicture: 1 } }
+            { _id: new ObjectId(params.userId) },
+            { projection: { username: 1, email: 1, profilePicture: 1, contactLink: 1 } }
         );
 
         if (!user) {
@@ -37,154 +61,7 @@ export async function GET(req) {
         });
     } catch (error) {
         await closeConnection();
-
         return new Response(JSON.stringify({ user: null }), {
-            status: 403,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    }
-}
-
-export async function PUT(req) {
-    const authHeader = req.headers.get("Authorization");
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return new Response(JSON.stringify({ user: null }), {
-            status: 401,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    }
-
-    const formData = await req.formData();
-    const email = formData.get("email");
-    const username = formData.get("username");
-    const password = formData.get("password");
-    const confirmPassword = formData.get("confirmPassword");
-    const contactLink = formData.get("contactLink");
-    const profilePicture = formData.get("profilePicture");
-
-    let profilePicturePath = "";
-    if (profilePicture && profilePicture.size > 0) {
-        const uniqueSuffix = `${Date.now()}-${Math.round(
-            Math.random() * 1e9
-        )}`;
-        const ext = path.extname(profilePicture.name);
-        const filename = `profile-${uniqueSuffix}${ext}`;
-
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: filename,
-            Body: Buffer.from(await profilePicture.arrayBuffer()),
-            ContentType: profilePicture.type,
-        };
-
-        const data = await s3.upload(params).promise();
-        profilePicturePath = data.Location;
-    } else {
-        profilePicturePath = "https://ui-avatars.com/api/?name=" + username + "&background=random&size=128";
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user_info = {
-        username,
-        password: hashedPassword,
-        email,
-        contactLink,
-        profilePicture: profilePicturePath,
-    };
-
-    const token = authHeader.split(" ")[1];
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const { db } = await connectToDatabase();
-        const userCollection = db.collection("users");
-        const user = await userCollection.updateOne(
-            { _id: new ObjectId(decoded.id) },
-            { $set: user_info },
-        );
-
-        if (!user) {
-            await closeConnection();
-            return new Response(JSON.stringify({ user: null }), {
-                status: 404,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
-
-        await closeConnection();
-
-        return new Response(JSON.stringify({ user }), {
-            status: 200,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    } catch (error) {
-        console.log(error);
-        await closeConnection();
-        return new Response(JSON.stringify({ user: null }), {
-            status: 403,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    }
-}
-
-// 유저 회원탈퇴
-
-export async function DELETE(req) {
-    const authHeader = req.headers.get("Authorization");
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return new Response(JSON.stringify({ success: false }), {
-            status: 401,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const { db } = await connectToDatabase();
-        const userCollection = db.collection("users");
-        const user = await userCollection.findOne(
-            { _id: new ObjectId(decoded.id) },
-            { projection: { username: 1, email: 1, profilePicture: 1 } }
-        );
-
-        if (!user) {
-            await closeConnection();
-            return new Response(JSON.stringify({ success: false }), {
-                status: 404,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
-
-        await userCollection.deleteOne({ _id: new ObjectId(decoded.id) });
-
-        await closeConnection();
-
-        return new Response(JSON.stringify({ success: true }), {
-            status: 200,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    } catch (error) {
-        await closeConnection();
-        return new Response(JSON.stringify({ success: false }), {
             status: 403,
             headers: {
                 "Content-Type": "application/json",

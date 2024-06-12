@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageSelection from "./inputs/ImageSelection";
+import ImageSelection from "./inputs/ProfileImageSelection";
 import ConditionalLabelInput from "./inputs/ConditionalLabelInput";
 import emailValidate from "@/utils/emailValidation";
 

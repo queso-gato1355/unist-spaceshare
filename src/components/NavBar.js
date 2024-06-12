@@ -36,7 +36,12 @@ export default function NavBar() {
                 alt="Profile"
                 className="w-8 h-8 rounded-full mr-2"
             />
-            <span className="text-white">{user.username}</span>
+            <span 
+                className="text-white cursor-pointer transition-all"
+                onClick={() => router.push(`/${user.username}`)}
+            >
+                {user.username}
+            </span>
         </div>
         ) : (
         <div className="w-24">

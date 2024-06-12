@@ -1,8 +1,8 @@
+
 // /app/api/user/route.js
 // 쿼리 파라미터로 user id를 입력하면 그에 따른 user 객체를 반환한다
 // GET /api/user?userId={userId}
-
-import { connectToDatabase } from "../../../lib/mongodb";
+import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { verifyAccessToken } from "@/utils/jwtToken";
 
@@ -33,7 +33,7 @@ export async function GET(req, {params}) {
             });
         }
 
-        const { client, db } = await connectToDatabase();
+        const { db } = await connectToDatabase();
         const userCollection = db.collection("users");
         const user = await userCollection.findOne(
             { _id: new ObjectId(params.userId) },
@@ -41,6 +41,7 @@ export async function GET(req, {params}) {
         );
 
         if (!user) {
+            await closeConnection();
             return new Response(JSON.stringify({ user: null }), {
                 status: 404,
                 headers: {
@@ -49,6 +50,8 @@ export async function GET(req, {params}) {
             });
         }
 
+        await closeConnection();
+
         return new Response(JSON.stringify({ user }), {
             status: 200,
             headers: {
@@ -56,6 +59,7 @@ export async function GET(req, {params}) {
             },
         });
     } catch (error) {
+        await closeConnection();
         return new Response(JSON.stringify({ user: null }), {
             status: 403,
             headers: {

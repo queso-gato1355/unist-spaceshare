@@ -32,3 +32,23 @@ export async function connectToDatabase() {
 
     return { client, db };
 }
+
+// close the connection
+export async function closeConnection() {
+    if (cachedClient) {
+        await cachedClient.close();
+    }
+}
+
+// terminate the connection
+export async function terminateConnection() {
+    if (cachedClient) {
+        try {
+            await cachedClient.close();
+            cachedClient = null;
+            cachedDb = null;
+        } catch (error) {
+            console.error('Error disconnecting from MongoDB:', error);
+        }
+    }
+}

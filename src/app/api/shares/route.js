@@ -110,13 +110,16 @@ export async function POST(request) {
 
         const insertedId = result.insertedId.toString();
 
+        await closeConnection();
+
         return new Response(JSON.stringify({ message: "Post inserted!", id: insertedId }), {
             status: 201,
             headers: { "Content-Type": "application/json" },
         });
     } catch (error) {
         console.error(error);
-        return new Response(JSON.stringify({ error: `An error occurred: ${error}` }), {
+        await closeConnection();
+        return new Response(JSON.stringify({ message: "An error occurred" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
         });

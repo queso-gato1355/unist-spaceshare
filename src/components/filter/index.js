@@ -4,7 +4,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { actions } from '@/components/store';
 
-export default function FilterPage({ handleFilter }) {
+export default function FilterPage({ initFilter, handleFilter }) {
     const dispatch = useDispatch();
     const filterParam = useSelector(state => state.filter);
 
@@ -114,7 +114,10 @@ export default function FilterPage({ handleFilter }) {
                         </div>
                     </div>
                 </div>
-                <button className='flex w-full h-full md:w-1/4 bg-slate-300 justify-center' onClick={handleFilter(filterParam)}>Search!</button>
+                <div className='flex flex-col space-y-4 w-full md:w-1/4 h-full justify-center' >
+                    <button className="flex min-h-8 bg-slate-300 justify-center items-center" onClick={initFilter}>Find All!</button>
+                    <button className="flex min-h-8 bg-slate-300 justify-center items-center" onClick={handleFilter(filterParam)}>Search!</button>
+                </div>
             </div>
         </>
     );

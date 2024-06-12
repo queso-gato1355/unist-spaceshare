@@ -1,15 +1,17 @@
-// src/app/api/user/route.js
+// /app/api/user/route.js
+// 쿼리 파라미터로 user id를 입력하면 그에 따른 user 객체를 반환한다
+// GET /api/user?userId={userId}
+
 import { connectToDatabase } from "../../../lib/mongodb";
-import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
+import { verifyAccessToken } from "@/utils/jwtToken";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+export async function GET(req, {params}) {
 
-export async function GET(req) {
-    const authHeader = req.headers.get("Authorization");
+    const auth = req.headers.get("Authorization");
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return new Response(JSON.stringify({ user: null }), {
+    if (!auth || !auth.startsWith("Bearer ")) {
+        return new Response(JSON.stringify({ user: null, error: "Authorization error" }), {
             status: 401,
             headers: {
                 "Content-Type": "application/json",
@@ -17,15 +19,25 @@ export async function GET(req) {
         });
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = auth.split(" ")[1];
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = verifyAccessToken(token);
+
+        if (!decoded) {
+            return new Response(JSON.stringify({ user: null, error: "Invalid token" }), {
+                status: 401,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+
         const { client, db } = await connectToDatabase();
         const userCollection = db.collection("users");
         const user = await userCollection.findOne(
-            { _id: new ObjectId(decoded.id) },
-            { projection: { username: 1, email: 1, profilePicture: 1 } }
+            { _id: new ObjectId(params.userId) },
+            { projection: { username: 1, email: 1, profilePicture: 1, contactLink: 1 } }
         );
 
         if (!user) {
@@ -45,58 +57,6 @@ export async function GET(req) {
         });
     } catch (error) {
         return new Response(JSON.stringify({ user: null }), {
-            status: 403,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    }
-}
-
-// 유저 회원탈퇴
-
-export async function DELETE(req) {
-    const authHeader = req.headers.get("Authorization");
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return new Response(JSON.stringify({ success: false }), {
-            status: 401,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const { client, db } = await connectToDatabase();
-        const userCollection = db.collection("users");
-        const user = await userCollection.findOne(
-            { _id: new ObjectId(decoded.id) },
-            { projection: { username: 1, email: 1, profilePicture: 1 } }
-        );
-
-        if (!user) {
-            return new Response(JSON.stringify({ success: false }), {
-                status: 404,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-        }
-
-        await userCollection.deleteOne({ _id: new ObjectId(decoded.id) });
-
-        return new Response(JSON.stringify({ success: true }), {
-            status: 200,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    } catch (error) {
-        return new Response(JSON.stringify({ success: false }), {
             status: 403,
             headers: {
                 "Content-Type": "application/json",

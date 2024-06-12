@@ -1,4 +1,4 @@
-import { connectToDatabase } from "../../../lib/mongodb";
+import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 import { generateAccessToken } from "../../../utils/jwtToken";
 
 export const POST = async (req) => {
@@ -9,6 +9,7 @@ export const POST = async (req) => {
     // refreshToken 검증
     const user = await db.collection("users").findOne({ refreshToken });
     if (!user) {
+        await closeConnection();
         return new Response(
             JSON.stringify({ error: "Invalid refresh token" }),
             {
@@ -22,6 +23,8 @@ export const POST = async (req) => {
 
     // 새로운 accessToken 발급
     const accessToken = generateAccessToken(user._id);
+
+    await closeConnection();
 
     return new Response(JSON.stringify({ success: true, accessToken }), {
         status: 200,

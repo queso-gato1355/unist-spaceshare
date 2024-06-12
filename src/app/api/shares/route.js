@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { connectToDatabase } from "../../../lib/mongodb";
+import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -69,12 +69,15 @@ export async function POST(request) {
 
         const insertedId = result.insertedId.toString();
 
+        await closeConnection();
+
         return new Response(JSON.stringify({ message: "Post inserted!", id: insertedId }), {
             status: 201,
             headers: { "Content-Type": "application/json" },
         });
     } catch (error) {
         console.error(error);
+        await closeConnection();
         return new Response(JSON.stringify({ message: "An error occurred" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },

@@ -1,6 +1,6 @@
 // src/app/api/login/route.js
 
-import { connectToDatabase } from "../../../lib/mongodb";
+import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 import bcrypt from "bcryptjs";
 import {
     generateRefreshToken,
@@ -27,6 +27,7 @@ export async function POST(req) {
     const user = await db.collection("users").findOne({ username });
 
     if (!user) {
+        await closeConnection();
         return new Response(JSON.stringify({ error: "Invalid username" }), {
             status: 400,
             headers: {
@@ -38,6 +39,7 @@ export async function POST(req) {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
+        await closeConnection();
         return new Response(JSON.stringify({ error: "Invalid password" }), {
             status: 400,
             headers: {
@@ -53,6 +55,8 @@ export async function POST(req) {
     await db
         .collection("users")
         .updateOne({ username }, { $set: { refreshToken } });
+
+    await closeConnection();
 
     return new Response(JSON.stringify({ success: true, id: user._id, accessToken: accessToken }), {
         status: 200,

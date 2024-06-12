@@ -1,4 +1,4 @@
-import { connectToDatabase } from "../../../lib/mongodb";
+import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 import bcrypt from "bcryptjs";
 import path from "path";
 import fs from "fs";
@@ -51,6 +51,8 @@ export const POST = async (req) => {
 
         const existingUser = await db.collection("users").findOne({ email });
         if (existingUser) {
+            await closeConnection();
+
             return new Response(
                 JSON.stringify({ error: "Email already exists" }),
                 { status: 400 }
@@ -88,11 +90,17 @@ export const POST = async (req) => {
         };
 
         await db.collection("users").insertOne(user);
+
+        await closeConnection();
+
         return new Response(JSON.stringify({ success: true, user }), {
             status: 201,
         });
     } catch (error) {
         console.error(error);
+
+        await closeConnection();
+
         return new Response(JSON.stringify({ error: "Server Error" }), {
             status: 500,
         });

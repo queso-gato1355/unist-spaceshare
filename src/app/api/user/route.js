@@ -1,5 +1,5 @@
 // src/app/api/user/route.js
-import { connectToDatabase } from "../../../lib/mongodb";
+import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
@@ -22,7 +22,7 @@ export async function GET(req) {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        const { client, db } = await connectToDatabase();
+        const { db } = await connectToDatabase();
         const userCollection = db.collection("users");
         const user = await userCollection.findOne(
             { _id: new ObjectId(decoded.id) },
@@ -30,6 +30,7 @@ export async function GET(req) {
         );
 
         if (!user) {
+            await closeConnection();
             return new Response(JSON.stringify({ user: null }), {
                 status: 404,
                 headers: {
@@ -38,6 +39,8 @@ export async function GET(req) {
             });
         }
 
+        await closeConnection();
+
         return new Response(JSON.stringify({ user }), {
             status: 200,
             headers: {
@@ -45,6 +48,8 @@ export async function GET(req) {
             },
         });
     } catch (error) {
+        await closeConnection();
+
         return new Response(JSON.stringify({ user: null }), {
             status: 403,
             headers: {
@@ -107,7 +112,7 @@ export async function PUT(req) {
     const token = authHeader.split(" ")[1];
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        const { client, db } = await connectToDatabase();
+        const { db } = await connectToDatabase();
         const userCollection = db.collection("users");
         const user = await userCollection.updateOne(
             { _id: new ObjectId(decoded.id) },
@@ -115,6 +120,7 @@ export async function PUT(req) {
         );
 
         if (!user) {
+            await closeConnection();
             return new Response(JSON.stringify({ user: null }), {
                 status: 404,
                 headers: {
@@ -122,6 +128,8 @@ export async function PUT(req) {
                 },
             });
         }
+
+        await closeConnection();
 
         return new Response(JSON.stringify({ user }), {
             status: 200,
@@ -131,6 +139,7 @@ export async function PUT(req) {
         });
     } catch (error) {
         console.log(error);
+        await closeConnection();
         return new Response(JSON.stringify({ user: null }), {
             status: 403,
             headers: {
@@ -158,7 +167,7 @@ export async function DELETE(req) {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        const { client, db } = await connectToDatabase();
+        const { db } = await connectToDatabase();
         const userCollection = db.collection("users");
         const user = await userCollection.findOne(
             { _id: new ObjectId(decoded.id) },
@@ -166,6 +175,7 @@ export async function DELETE(req) {
         );
 
         if (!user) {
+            await closeConnection();
             return new Response(JSON.stringify({ success: false }), {
                 status: 404,
                 headers: {
@@ -176,6 +186,8 @@ export async function DELETE(req) {
 
         await userCollection.deleteOne({ _id: new ObjectId(decoded.id) });
 
+        await closeConnection();
+
         return new Response(JSON.stringify({ success: true }), {
             status: 200,
             headers: {
@@ -183,6 +195,7 @@ export async function DELETE(req) {
             },
         });
     } catch (error) {
+        await closeConnection();
         return new Response(JSON.stringify({ success: false }), {
             status: 403,
             headers: {

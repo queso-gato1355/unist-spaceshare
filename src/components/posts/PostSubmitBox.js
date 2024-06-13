@@ -15,7 +15,7 @@ export default function PostSubmitBox({ buildingOptions }) {
     const [formData, setFormData] = useState({
         title: "",
         image: "",
-        location: "",
+        location: "Building 301",
         locationType: "",
         description: "",
         price: {

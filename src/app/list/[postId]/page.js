@@ -1,5 +1,6 @@
 // app/list/[postId]/page.js
 import { ObjectId } from "mongodb";
+import ButtonLink from "@/components/buttons/ButtonLink";
 
 export default async function DetailedPage({ params }) {
     const { postId } = params;
@@ -26,6 +27,13 @@ export default async function DetailedPage({ params }) {
 
     return (
         <div className="flex-col justify-center items-center text-center">
+            {/* 항상 화면 왼쪽 위에 존재하는 돌아가기 버튼 */}
+            <ButtonLink
+                href="/list"
+                className="fixed bottom-5 left-5 transition-all p-2 rounded-xl bg-green-500 text-white shadow-lg hover:bg-green-700 hover:shadow-2xl"
+            >
+                Back
+            </ButtonLink>
             <div className="p-4">
                 <h1 className="text-5xl font-bold">{post.title}</h1>
                 <h1 className="text-lg text-gray-500">{post.location}</h1>

@@ -2,6 +2,7 @@ import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 import { verifyAccessToken } from "../../../utils/jwtToken";
 import instanceValidation from "../../../utils/instanceValidation";
 import AWS from "@/../../aws.config";
+import path from "path";
 
 const s3 = new AWS.S3();
 
@@ -61,7 +62,7 @@ export async function POST(request) {
         let imageLink = "";
         console.log(image);
         // image 값이 http로 시작할 경우
-        if (image.startsWith("http")) {
+        if (image instanceof String && image.startsWith("http")) {
             imageLink = image;
         } else {
             const uniqueSuffix = `${Date.now()}-${Math.round(
@@ -73,8 +74,8 @@ export async function POST(request) {
             const params = {
                 Bucket: process.env.AWS_BUCKET_NAME,
                 Key: filename,
-                Body: image,
-                ACL: "public-read",
+                Body: Buffer.from(await image.arrayBuffer()),
+                ContentType: image.type,
             };
 
             try {

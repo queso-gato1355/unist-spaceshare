@@ -1,5 +1,5 @@
 // src/app/api/user/route.js
-import { connectToDatabase } from "../../../../lib/mongodb";
+import { connectToDatabase, closeConnection } from "../../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { verifyAccessToken } from "@/utils/jwtToken";
 
@@ -19,7 +19,7 @@ export async function GET(req) {
 
     try {
         const decoded = verifyAccessToken(token);
-        const { client, db } = await connectToDatabase();
+        const { db } = await connectToDatabase();
         const userCollection = db.collection("users");
         const user = await userCollection.findOne(
             { _id: new ObjectId(decoded.id) },
@@ -27,6 +27,7 @@ export async function GET(req) {
         );
 
         if (!user) {
+            await closeConnection();
             return new Response(JSON.stringify({ user: null }), {
                 status: 404,
                 headers: {
@@ -35,6 +36,8 @@ export async function GET(req) {
             });
         }
 
+        await closeConnection();
+
         return new Response(JSON.stringify({ user }), {
             status: 200,
             headers: {
@@ -42,6 +45,7 @@ export async function GET(req) {
             },
         });
     } catch (error) {
+        await closeConnection();
         return new Response(JSON.stringify({ user: null }), {
             status: 403,
             headers: {

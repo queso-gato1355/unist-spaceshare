@@ -6,9 +6,10 @@ import { connectToDatabase, closeConnection } from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { verifyAccessToken } from "@/utils/jwtToken";
 
-export async function GET(req, {params}) {
+export async function GET(req) {
 
     const auth = req.headers.get("Authorization");
+    const params = req.nextUrl.searchParams;
 
     if (!auth || !auth.startsWith("Bearer ")) {
         return new Response(JSON.stringify({ user: null, error: "Authorization error" }), {

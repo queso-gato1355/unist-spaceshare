@@ -44,7 +44,9 @@ export default function PostList() {
     return (
         <div className="flex flex-col w-full">
             <div className="flex flex-col w-full">
-                <FilterPage handleFilter={(filterParam)=>()=>{
+                <FilterPage
+                    initFilter={()=>setFilter(()=>(()=>true))}
+                    handleFilter={(filterParam)=>()=>{
                     setFilter(() => createFilterFunction(filterParam));
                     // console.log('dFilter set!');
                 }}></FilterPage>

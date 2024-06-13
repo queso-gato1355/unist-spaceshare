@@ -3,7 +3,7 @@ import ButtonLink from "@/components/buttons/ButtonLink";
 export default function Home() {
     return (
         <div className="container mx-auto p-4">
-            <div className="text-left items-center">
+            <div className="flex-col text-center items-center">
                 <h1 className="text-4xl font-bold mb-4 text-center">Share your Space!</h1>
                 <p className="mb-4">
                 Many of the students who reside on the campus during semesters often deliver the items needed for staying in the dormitory from their home, and send it back at the beginning of the vacation if they choose to go home. It is highly cumbersome to move the items such a long distance, or to trash minor but necessary items and re-buy them. <br/>
